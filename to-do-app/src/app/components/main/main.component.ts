@@ -10,6 +10,8 @@ import { IHeaderTable } from '../../shared/models/iheader-table';
 import { AddNewItemFormComponent } from '../../shared/components/add-new-item-form/add-new-item-form.component';
 import { DynamicSearchComponent } from '../../shared/components/dynamic-search/dynamic-search.component';
 import { ToDoModel } from '../../shared/models/to-do-model';
+import { ConfirmationService } from 'primeng/api';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 @Component({
   selector: 'app-main',
@@ -23,12 +25,15 @@ import { ToDoModel } from '../../shared/models/to-do-model';
     InputTextModule,
     AddNewItemFormComponent,
     DynamicSearchComponent,
+    ConfirmDialogModule,
   ],
   templateUrl: './main.component.html',
   styleUrl: './main.component.scss',
+  providers: [ConfirmationService],
 })
 export class MainComponent {
   public toDoService = inject(ToDoService);
+  public confirmationService = inject(ConfirmationService);
 
   title = 'To Do App';
   toDoListCols!: IHeaderTable[];
@@ -59,11 +64,21 @@ export class MainComponent {
   }
 
   deleteItem(item: any) {
-    this.toDoService.removeItem(item.id);
+    this.confirmationService.confirm({
+      message: `Are you sure you want to delete the item "${item.title}"?`,
+      header: 'Confirm Delete',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.toDoService.removeItem(item.id);
+      },
+      reject: () => {
+        console.log('Delete action rejected');
+      },
+    });
   }
 
   filterToDoList(criteria: any) {
-    this.toDoService.updateFilterCriteria(criteria); // Update filter criteria in the service
+    this.toDoService.updateFilterCriteria(criteria);
   }
 
   deepSearch() {
