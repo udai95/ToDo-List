@@ -10,6 +10,24 @@ export class ToDoService {
   showAddNewItemForm = signal<boolean>(false);
   editMode = signal<boolean>(false);
   editedItem = signal<ToDoModel | null>(null);
+  filterCriteria = signal<any>({ title: '', startDate: '', endDate: '', category: '' });
+  filteredList = computed(() => {
+    const { title, startDate, endDate, category } = this.filterCriteria();
+    const allItems = this.itemsList();
+
+    return allItems.filter((item) => {
+      const matchesTitle = title ? item.title.includes(title) : true;
+      const matchesCategory = category ? item.category.includes(category) : true;
+      const matchesStartDate = startDate
+        ? new Date(item.startDate) >= new Date(startDate)
+        : true;
+      const matchesEndDate = endDate
+        ? new Date(item.endDate) <= new Date(endDate)
+        : true;
+
+      return matchesTitle && matchesCategory && matchesStartDate && matchesEndDate;
+    });
+  });
 
   addItem(item: ToDoModel) {
     const nextId =
@@ -47,6 +65,10 @@ export class ToDoService {
 
   updateLocalStorage() {
     localStorage.setItem('items', JSON.stringify(this.itemsList()));
+  }
+
+  updateFilterCriteria(criteria: any) {
+    this.filterCriteria.set(criteria);
   }
 
   private getItemsFromLocalStorage(): ToDoModel[] {

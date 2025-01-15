@@ -32,12 +32,12 @@ export class MainComponent {
 
   title = 'To Do App';
   toDoListCols!: IHeaderTable[];
-  filteredToDoListData = signal<ToDoModel[]>([]); 
-  toDoListData = computed(() => this.filteredToDoListData());
+  toDoListData = computed(() => this.toDoService.filteredList());
+  deepTitleSearch = signal<string>('');
+  deepSearchListItem = signal<ToDoModel[]>([]);
 
   ngOnInit() {
     this.getTableCols();
-    this.initializeData();
   }
 
   private getTableCols() {
@@ -49,10 +49,6 @@ export class MainComponent {
       { header: 'Category', field: 'category' },
       { header: 'Depends On', field: 'dependsOn' },
     ];
-  }
-
-  private initializeData() {
-    this.filteredToDoListData.set(this.toDoService.toDoList());
   }
 
   editItem(item: any) {
@@ -67,22 +63,45 @@ export class MainComponent {
   }
 
   filterToDoList(criteria: any) {
-    const { title, startDate, endDate, category } = criteria;
+    this.toDoService.updateFilterCriteria(criteria); // Update filter criteria in the service
+  }
 
-    const filtered = this.toDoService.toDoList().filter((item) => {
-      const matchesTitle = title ? item.title.includes(title) : true;
-      const matchesCategory = category ? item.category.includes(category) : true;
-      const matchesStartDate = startDate
-        ? new Date(item.startDate) >= new Date(startDate)
-        : true;
-      const matchesEndDate = endDate
-        ? new Date(item.endDate) <= new Date(endDate)
-        : true;
+  deepSearch() {
+    const searchTerm = this.deepTitleSearch();
+    const allItems = this.toDoService.toDoList();
 
-      return matchesTitle && matchesCategory && matchesStartDate && matchesEndDate;
+    const matchingItems = allItems.filter((item) =>
+      item.title.toLowerCase().includes(searchTerm.toLowerCase()),
+    );
+
+    const resultSet = new Set<ToDoModel>();
+    const findDependencies = (item: ToDoModel) => {
+      resultSet.add(item);
+
+      if (item.dependsOn) {
+        item.dependsOn.forEach((dependencyId) => {
+          const dependentItem = allItems.find((i) => i.id === dependencyId);
+          if (dependentItem && !resultSet.has(dependentItem)) {
+            findDependencies(dependentItem);
+          }
+        });
+      }
+    };
+
+    const findReverseDependencies = (item: ToDoModel) => {
+      allItems.forEach((i) => {
+        if (i.dependsOn?.includes(item.id) && !resultSet.has(i)) {
+          resultSet.add(i);
+          findReverseDependencies(i);
+        }
+      });
+    };
+
+    matchingItems.forEach((item) => {
+      findDependencies(item);
+      findReverseDependencies(item);
     });
 
-    this.filteredToDoListData.set(filtered);
+    this.deepSearchListItem.set(Array.from(resultSet));
   }
 }
-

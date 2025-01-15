@@ -2,7 +2,9 @@
   <div class="flex flex-column">
     <div class="main-header flex flex-column">
       <h1>{{ title }}</h1>
-      <app-dynamic-search (search)="filterToDoList($event)"></app-dynamic-search>
+      <app-dynamic-search
+        (search)="filterToDoList($event)"
+      ></app-dynamic-search>
       <div class="px-4 flex justify-content-end">
         <p-button
           label="Add Item"
@@ -35,6 +37,28 @@
           ></p-button>
         </div>
       </ng-template>
+    </div>
+
+    <div class="deep-search flex align-items-center gap-3 mt-4">
+      <div class="deep-search-input flex flex-column gap-2">
+        <label for="deepSearch">Search by title deeply</label>
+        <input type="text" pInputText [(ngModel)]="deepTitleSearch" />
+      </div>
+      <div class="mt-4">
+        <p-button
+          label="Search"
+          icon="pi pi-search"
+          (click)="deepSearch()"
+        ></p-button>
+      </div>
+    </div>
+    <div class="mt-4">
+      <app-table
+        [columns]="toDoListCols"
+        [data]="deepSearchListItem()"
+        [actionTemplate]="actionTemplate"
+        [isContainActions]="true"
+      ></app-table>
     </div>
   </div>
 </div>
