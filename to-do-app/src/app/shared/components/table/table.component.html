@@ -1,26 +1,79 @@
 <p-table
-  [columns]="columns"
-  [value]="data"
-  [tableStyle]="{ 'min-width': '70rem' }"
+  class="custom-header-separator"
+  [columns]="columns()"
+  [value]="data()"
+  [tableStyle]="{
+    'min-width': tableMinWidth(),
+    border: tableBorderStyle()
+  }"
+  [styleClass]="tableStyleClass()"
+  [scrollable]="scrollable()"
+  [scrollHeight]="scrollHeight()"
+  [rows]="numberOfRows()"
+  [paginator]="true"
+  [loading]="isLoading()"
 >
-  <ng-template #header let-columns>
+  <ng-template pTemplate="header" let-columns>
     <tr>
-      @for (col of columns; track $index) {
-
-      <th>
-        {{ col.header }}
+      <th *ngFor="let col of columns; trackBy: trackByField" [id]="col.field">
+        {{ col.header}}
       </th>
-      }
+      <th
+        style="width: 5%; text-align: center; white-space: nowrap"
+        *ngIf="actionNameHeader() || actionIconHeader()"
+      >
+        <i *ngIf="actionIconHeader()" class="pi" [ngClass]="actionIconHeader()"></i>
+        <span *ngIf="actionNameHeader()">{{ actionNameHeader() }}</span>
+      </th>
     </tr>
   </ng-template>
-  <ng-template #body let-rowData let-columns="columns">
-    <tr>
-      @for (col of columns; track $index) {
 
-      <td>
-        {{ rowData[col.field] }}
-      </td>
+  <ng-template pTemplate="body" let-rowData let-columns="columns">
+    <tr>
+      @for (col of columns; let i = $index; track col) {
+        <td [ngClass]="col.classesStyle">
+            <div *ngIf="col.link; else showOther">
+              <p [routerLink]="[rowData[col.link]]" class="pointer">
+                {{ getRowValueFromHeader(col, rowData) }}
+              </p>
+            </div>
+            <ng-template #showOther>
+              <ng-container
+                *ngTemplateOutlet="
+                  col.customTemplate || defaultTemplate;
+                  context: { col: col, rowData: rowData }
+                "
+              >
+              </ng-container>
+              <ng-template #defaultTemplate>
+                {{ getRowValueFromHeader(col, rowData) }}
+              </ng-template>
+            </ng-template>
+        </td>
       }
+      <td style="text-align: center" *ngIf="isContainActions()">
+        <ng-container
+          *ngTemplateOutlet="
+            isContainActions() ? actionTemplate() : null;
+            context: { rowData: rowData }
+          "
+        >
+        </ng-container>
+      </td>
     </tr>
+  </ng-template>
+
+  <ng-template pTemplate="emptymessage">
+    <tr>
+      <td colspan="12">
+        <div class="text-center font-bold text-success-medium-700">
+          <p>No Data</p>
+        </div>
+      </td>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+    <ng-content select=".table-footer"></ng-content>
   </ng-template>
 </p-table>
