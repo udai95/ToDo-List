@@ -17,13 +17,13 @@
           <div class="flex-1">
             <div class="flex flex-column gap-2">
               <label for="startDate">Start Date</label>
-              <p-calendar formControlName="startDate" />
+              <p-calendar formControlName="startDate" styleClass="w-full" />
             </div>
           </div>
           <div class="flex-1">
             <div class="flex flex-column gap-2">
               <label for="endDate">End Date</label>
-              <p-calendar formControlName="endDate" />
+              <p-calendar formControlName="endDate" styleClass="w-full"/>
             </div>
           </div>
         </div>
@@ -34,7 +34,6 @@
           label="Search"
           icon="pi pi-search"
           class="p-button-text"
-          severity="secondary"
           (click)="onSearch()"
         ></p-button>
       </div>

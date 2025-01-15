@@ -9,7 +9,7 @@
       <div class="px-4 flex justify-content-end">
         <p-button
           label="Add Item"
-          severity="secondary"
+          severity="info"
           (click)="toDoService.showAddNewItemForm.set(true)"
         ></p-button>
       </div>
@@ -23,16 +23,20 @@
       ></app-table>
 
       <ng-template #actionTemplate let-rowData="rowData">
-        <div class="flex justify-content-end gap-2">
+        <div class="flex justify-content-end">
           <p-button
             icon="pi pi-pencil"
             class="p-button-text"
             severity="secondary"
+            [rounded]="true"
+            [text]="true"
             (click)="editItem(rowData)"
           ></p-button>
           <p-button
             icon="pi pi-trash"
             class="p-button-text"
+            [rounded]="true"
+            [text]="true"
             severity="danger"
             (click)="deleteItem(rowData)"
           ></p-button>
