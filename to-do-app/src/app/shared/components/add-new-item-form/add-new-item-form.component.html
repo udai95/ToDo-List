@@ -23,13 +23,13 @@
             <div class="col-6">
               <div class="flex flex-column gap-2">
                 <label for="startDate">Start Date</label>
-                <p-calendar formControlName="startDate" />
+                <p-calendar formControlName="startDate" styleClass="w-full" />
               </div>
             </div>
             <div class="col-6">
               <div class="flex flex-column gap-2">
                 <label for="endDate">End Date</label>
-                <p-calendar formControlName="endDate" />
+                <p-calendar formControlName="endDate" styleClass="w-full" />
               </div>
             </div>
 
@@ -41,7 +41,8 @@
                   formControlName="dependsOn"
                   optionLabel="title"
                   [optionValue]="'id'"
-                  placeholder="Select Cities"
+                  placeholder="Select DependsOn"
+                  styleClass="w-full"
                 />
               </div>
             </div>
