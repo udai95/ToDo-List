@@ -1,6 +1,6 @@
 <p-sidebar (onHide)="onClose()" [(visible)]="toDoService.showAddNewItemForm">
   <ng-template pTemplate="header">
-    <div class="font-bold text-2xl">Add New Item</div>
+    <div class="font-bold text-2xl">{{title()}}</div>
   </ng-template>
 
   <ng-template pTemplate="content">

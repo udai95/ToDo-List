@@ -1,5 +1,5 @@
 import { InputTextModule } from 'primeng/inputtext';
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { DropdownModule } from 'primeng/dropdown';
 import { SidebarModule } from 'primeng/sidebar';
@@ -39,11 +39,14 @@ export class AddNewItemFormComponent {
   itemForm!: FormGroup;
 
   dropdownItems = computed(() => this.toDoService.toDoList() || []);
+  title = signal<string>('Add New Item');
 
   ngOnInit() {
     this.initForm();
-    if (this.toDoService.editMode() && this.toDoService.editedItem())
+    if (this.toDoService.editMode() && this.toDoService.editedItem()) {
+      this.title.set('Edit ' + this.toDoService.editedItem()?.title);
       this.itemForm.patchValue(this.toDoService.editedItem()!);
+    }
   }
 
   initForm() {
