@@ -1,0 +1,26 @@
+<p-table
+  [columns]="columns"
+  [value]="data"
+  [tableStyle]="{ 'min-width': '70rem' }"
+>
+  <ng-template #header let-columns>
+    <tr>
+      @for (col of columns; track $index) {
+
+      <th>
+        {{ col.header }}
+      </th>
+      }
+    </tr>
+  </ng-template>
+  <ng-template #body let-rowData let-columns="columns">
+    <tr>
+      @for (col of columns; track $index) {
+
+      <td>
+        {{ rowData[col.field] }}
+      </td>
+      }
+    </tr>
+  </ng-template>
+</p-table>
